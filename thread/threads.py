@@ -34,4 +34,4 @@ if __name__ == "__main__":
         i.join()
 
     end = time.perf_counter()
-    print(f"Tasks ended in {round(end - start, 2)} second(s)")
+    logging.info(f"Tasks ended in {round(end - start, 2)} second(s)")

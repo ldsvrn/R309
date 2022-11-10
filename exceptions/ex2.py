@@ -21,7 +21,8 @@ def printfile(file):
 
 if __name__ == "__main__":
     try:
-        printfile(sys.argv[1])
+        sys.exit(printfile(sys.argv[1]))
     except IndexError as err:
         print("Erreur: Aucun fichier en argument")
+        sys.exit(22) # EINVAL 	22 	It is displayed if there is an invalid argument.
         # raise Exception("Aucun fichier en argument!") from err # err cause cette exception
