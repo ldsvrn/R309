@@ -23,8 +23,7 @@ def download_image(img_url):
         logging.info(f"{img_name} was downloaded")
 
 
-if __name__ == "__main__":
-    start = time.perf_counter()
+def main():
     T = []
     for i, item in enumerate(img_urls):
         T.append(multiprocessing.Process(target=download_image, args=[item]))
@@ -33,5 +32,9 @@ if __name__ == "__main__":
     for i in T:
         i.join()
 
+
+if __name__ == "__main__":
+    start = time.perf_counter()
+    main()
     end = time.perf_counter()
     logging.info(f"Tasks ended in {round(end - start, 2)} second(s)")

@@ -23,11 +23,13 @@ def download_image(img_url):
         logging.info(f"{img_name} was downloaded")
 
 
-if __name__ == "__main__":
-    start = time.perf_counter()
-
+def main():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.map(download_image, img_urls)
 
+
+if __name__ == "__main__":
+    start = time.perf_counter()
+    main()
     end = time.perf_counter()
     logging.info(f"Tasks ended in {round(end - start, 2)} second(s)")
