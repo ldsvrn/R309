@@ -29,6 +29,7 @@ def main():
         sys.exit(13) # EACCES Permission denied
     except ConnectionRefusedError:
         print(f"Impossible de ce connecter au serveur {HOST}")
+        sys.exit(118) # EHOSTUNREACH Host is unreachable
     else:
         client_handler = threading.Thread(target=handle_client, args=[client])
         client_handler.start()
