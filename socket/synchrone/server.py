@@ -20,7 +20,6 @@ def main():
         server.bind(HOST)
         server.listen(5)
 
-        
         msgcl = ""
         msgsrv = ""
         while ARRET not in (msgcl, msgsrv):
@@ -28,7 +27,7 @@ def main():
             if conn not in connections:
                 logging.info(f"Connected to {address}")
                 connections.append(conn)
-            
+
             msgcl = ""
             msgsrv = ""
 
@@ -43,20 +42,20 @@ def main():
                 except BrokenPipeError:
                     logging.error(f"BrokenPipeError with {address}")
                     break
-            
+
             if str(msgcl) == BYE or str(msgsrv) == BYE:
                 logging.info(f"Closing connection with {address}...")
                 conn.send(BYE.encode())
                 conn.close()
 
-
         # Quand ARRET est envoyé (normalement jespere plz help)
         logging.info("Stopping server...")
         try:
             conn.send(ARRET.encode())
-        except BrokenPipeError: # On s'en fout de l'erreur ici honnetement, elle arrive quand le serv veut l'arret car le client est déjà déco...
+        except BrokenPipeError:  # On s'en fout de l'erreur ici honnetement, elle arrive quand le serv veut l'arret car le client est déjà déco...
             pass
-        for i in connections: # il y a moyen que ça pose problème plus tard car on déco déjà une conn avant
+        for i in connections:  
+            # il y a moyen que ça pose problème plus tard car on déco déjà une conn avant
             i.close()
         server.close()
         sys.exit(0)
