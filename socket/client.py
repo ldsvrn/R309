@@ -8,25 +8,23 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-message = "test"
-host = "127.0.0.1"
-port = int(sys.argv[1])
+HOST = ("127.0.0.1", int(sys.argv[1]))
 
-def recieve_thread():
-    logging.debug("Created thread")
-    client_socket = socket.socket()
-    client_socket.connect((host, port))
-    while True:
-        data = client_socket.recv(1024).decode()
-        print(data)
+BYE = "bye"
+ARRET = "arret"
 
-if __name__== "__main__":
-    t = threading.Thread(target=recieve_thread)
-    t.start()
+def main():
+    client = socket.socket()
+    client.connect(HOST)
 
-    send_socket = socket.socket()
-    send_socket.connect((host, port))
-    while True:
-        logging.debug("Sending test message")
-        send_socket.send(message.encode())
-        time.sleep(1)
+    msgcl = ""
+    msgsrv = ""
+    while BYE not in (msgcl, msgsrv) and ARRET not in (msgcl, msgsrv):
+        msgcl = input("Message:")
+        client.send(msgcl.encode())
+        msgsrv = client.recv(1024).decode()
+        print(msgsrv)
+    client.close()
+
+if __name__ == "__main__":
+    main()

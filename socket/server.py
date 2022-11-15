@@ -2,27 +2,44 @@
 
 import socket
 import sys
-import threading
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+HOST = ("127.0.0.1", int(sys.argv[1]))
+
+BYE = "bye"
+ARRET = "arret"
 
 connections = []
 
-host = "127.0.0.1"
-port = int(sys.argv[1])
-reply = "reply"
 
-def recieve_thread():
-    server_socket = socket.socket()
-    server_socket.bind((host, port))
-    server_socket.listen(5)
+def main():
+    server = socket.socket()
+    server.bind(HOST)
+    server.listen(5)
+    conn, address = server.accept()
+    if conn not in connections:
+        logging.info(f"Connected to {address}")
+        connections.append(conn)
     while True:
-        conn, address = server_socket.accept()
-        if conn not in connections:
-            connections.append(conn)
         data = conn.recv(1024).decode()
         print(data)
-        conn.send(reply.encode())
+        match str(data):
+            case "bye":
+                logging.info(f"Closing connection with {address}...")
+                conn.send(BYE.encode())
+                break
+            case "arret":
+                logging.info("Stopping server...")
+                conn.send(ARRET.encode())
+                for i in connections:
+                    i.close()
+                server.close()
+                sys.exit(0)
+        conn.send("ack".encode())
+    conn.close()
+
 
 if __name__ == "__main__":
-    t = threading.Thread(target=recieve_thread)
-    t.start()
-    t.join()
+    main()
