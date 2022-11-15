@@ -18,30 +18,46 @@ def main():
     server = socket.socket()
     server.bind(HOST)
     server.listen(5)
-    conn, address = server.accept()
-    if conn not in connections:
-        logging.info(f"Connected to {address}")
-        connections.append(conn)
-    while True:
-        try:
-            data = conn.recv(1024).decode()
-            print(data)
-            if str(data) == BYE:
-                logging.info(f"Closing connection with {address}...")
-                conn.send(BYE.encode())
+
+    
+    msgcl = ""
+    msgsrv = ""
+    while ARRET not in (msgcl, msgsrv):
+        conn, address = server.accept()
+        if conn not in connections:
+            logging.info(f"Connected to {address}")
+            connections.append(conn)
+        
+        msgcl = ""
+        msgsrv = ""
+
+        while BYE not in (msgcl, msgsrv) and ARRET not in (msgcl, msgsrv):
+            try:
+                msgcl = conn.recv(1024).decode()
+                print(msgcl)
+                if str(msgcl) == BYE or str(msgcl) == ARRET:
+                    break
+                msgsrv = input("Message:")
+                conn.send(msgsrv.encode())
+            except BrokenPipeError:
+                logging.error(f"BrokenPipeError with {address}")
                 break
-            elif str(data) == ARRET:
-                logging.info("Stopping server...")
-                conn.send(ARRET.encode())
-                for i in connections:
-                    i.close()
-                server.close()
-                sys.exit(0)
-            conn.send("ack".encode())
-        except BrokenPipeError:
-            logging.error(f"BrokenPipeError with {address}")
-            break
-    conn.close()
+        
+        if str(msgcl) == BYE or str(msgsrv) == BYE:
+            logging.info(f"Closing connection with {address}...")
+            conn.send(BYE.encode())
+
+
+    # Quand ARRET est envoyé (normalement jespere plz help)
+    logging.info("Stopping server...")
+    try:
+        conn.send(ARRET.encode())
+    except BrokenPipeError: # On s'en fout de l'erreur ici honnetement, elle arrive quand le serv veut l'arret car le client est déjà déco...
+        pass
+    for i in connections: # il y a moyen que ça pose problème plus tard car on déco déjà une conn avant
+        i.close()
+    server.close()
+    sys.exit(0)
 
 
 if __name__ == "__main__":
