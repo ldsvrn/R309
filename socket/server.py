@@ -25,18 +25,17 @@ def main():
     while True:
         data = conn.recv(1024).decode()
         print(data)
-        match str(data):
-            case "bye":
-                logging.info(f"Closing connection with {address}...")
-                conn.send(BYE.encode())
-                break
-            case "arret":
-                logging.info("Stopping server...")
-                conn.send(ARRET.encode())
-                for i in connections:
-                    i.close()
-                server.close()
-                sys.exit(0)
+        if str(data) == BYE:
+            logging.info(f"Closing connection with {address}...")
+            conn.send(BYE.encode())
+            break
+        elif str(data) == ARRET:
+            logging.info("Stopping server...")
+            conn.send(ARRET.encode())
+            for i in connections:
+                i.close()
+            server.close()
+            sys.exit(0)
         conn.send("ack".encode())
     conn.close()
 

@@ -2,8 +2,6 @@
 
 import socket
 import sys
-import threading
-import time
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -12,6 +10,7 @@ HOST = ("127.0.0.1", int(sys.argv[1]))
 
 BYE = "bye"
 ARRET = "arret"
+
 
 def main():
     client = socket.socket()
@@ -25,6 +24,7 @@ def main():
         msgsrv = client.recv(1024).decode()
         print(msgsrv)
     client.close()
+
 
 if __name__ == "__main__":
     main()
