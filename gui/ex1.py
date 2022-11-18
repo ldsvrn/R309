@@ -16,6 +16,7 @@ class MainWindow(QMainWindow):
         self.__name = QLabel("")
         self.__quit = QPushButton("Quitter")
 
+        # Possibilité de rajouter des paramètres dans le addwidget comme sur gnuradio
         button_widget = QWidget()
         grid_button = QGridLayout()
         button_widget.setLayout(grid_button)
