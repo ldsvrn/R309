@@ -7,8 +7,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         widget = QWidget()
         self.setCentralWidget(widget)
-        self.__grid = QGridLayout()
-        widget.setLayout(self.__grid)
+        grid = QGridLayout()
+        widget.setLayout(grid)
 
         self.__lab = QLabel("Saisir votre nom")
         self.__text = QLineEdit("")
@@ -16,12 +16,18 @@ class MainWindow(QMainWindow):
         self.__name = QLabel("")
         self.__quit = QPushButton("Quitter")
 
-        #  TODO: mettre un widget dans le grid
-        self.__grid.addWidget(self.__lab, 0, 0)
-        self.__grid.addWidget(self.__text, 1, 0)
-        self.__grid.addWidget(self.__ok, 2, 0)
-        self.__grid.addWidget(self.__name, 3, 0)
-        self.__grid.addWidget(self.__quit, 4, 0)
+        button_widget = QWidget()
+        grid_button = QGridLayout()
+        button_widget.setLayout(grid_button)
+
+        grid.addWidget(self.__lab, 0, 0)
+        grid.addWidget(self.__text, 1, 0)
+        grid.addWidget(self.__name, 2, 0)
+        grid.addWidget(button_widget, 3, 0)
+        
+        grid_button.addWidget(self.__ok, 0, 0)
+        grid_button.addWidget(self.__quit, 0, 1)
+
 
 
         # Ajouter les composants au grid ayout
