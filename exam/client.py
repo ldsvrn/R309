@@ -21,7 +21,10 @@ import socket
 
 logging.basicConfig(level=logging.DEBUG)
 
-
+# Alors ça segfault aléatoirement lors de l'échange de message
+# et a chaque fois lors de la déconnexion, sûrement un rapport
+# avec la façon dont le thread est fermé. Je crois que le socket
+# est fermé avant que le thread soit stoppé.
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -83,6 +86,7 @@ class MainWindow(QMainWindow):
 
         self.__ButtonConnexion.clicked.connect(self.__connexion)
         self.__ButtonMessage.clicked.connect(self.__envoi)
+        self.__LineEditMessage.returnPressed.connect(self.__envoi)
         self.__ButtonEffacer.clicked.connect(lambda: self.__TextBrowser.clear())
         self.__ButtonQuitter.clicked.connect(self.__quitter)
 
@@ -114,6 +118,8 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 self.ErrorBox(e, "Erreur lors de la déconnexion!")
             else:
+                self.__connected = False
+                print("close socket")
                 self.__client.close()
                 self.__ButtonConnexion.setText("Connexion")
             finally:
@@ -128,9 +134,11 @@ class MainWindow(QMainWindow):
             self.ErrorBox(e, "Erreur lors de l'envoi du message!")
         else:
             print(f"Envoi: {msgcl}")
+            self.__LineEditMessage.setText("")
             self.__TextBrowser.append(msgcl)
             self.__TextBrowser.setAlignment(Qt.AlignLeft)
-        
+    
+    # Comme le serveur n'est pas asynchrone le bouton ne marche pas quand c'est au tour du serveur de parler
     def __quitter(self):
         if self.__connected:
             try:
@@ -138,18 +146,22 @@ class MainWindow(QMainWindow):
                 self.__client.send("deco-server".encode())
             except Exception as e:
                 print(f"erreur lors de la fermeture {e}")
+            else:
+                self.__connected = False
             finally:
                 QCoreApplication.exit(0)
 
     def __recv(self):
             msgsrv = ""
-            while msgsrv != "deco-server":
+            print("recv start")
+            while msgsrv != "deco-server" and self.__connected:
                 try:
                     msgsrv = self.__client.recv(1024).decode()
                 except Exception as e:
                     self.ErrorBox(e, "Erreur pendant la réception!")
                 self.__TextBrowser.append(msgsrv)
                 self.__TextBrowser.setAlignment(Qt.AlignRight)
+            print("recv stop")
 
     def InfoBox(self, message):
         msg = QMessageBox()
