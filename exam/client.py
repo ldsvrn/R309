@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.DEBUG)
 # Alors ça segfault aléatoirement lors de l'échange de message
 # et a chaque fois lors de la déconnexion, sûrement un rapport
 # avec la façon dont le thread est fermé. Je crois que le socket
-# est fermé avant que le thread soit stoppé.
+# est fermé avant que le thread soit stoppé???
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
